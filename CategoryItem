@@ -1,0 +1,17 @@
+import React, { createContext, useState, useContext } from 'react';
+
+const ItemContext = createContext()
+
+export function useItem() {
+    return useContext(ItemContext)
+}
+
+export function CatItem({ children }) {
+    const [category, setCategory] = useState([]);
+
+    return (
+        <ItemContext.Provider value={category}>
+            {children}
+        </ItemContext.Provider>
+    )
+}
