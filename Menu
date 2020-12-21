@@ -1,0 +1,131 @@
+import React, { useState, useReducer, useEffect } from 'react';
+import {
+    View,
+    Text, 
+    FlatList,
+    StyleSheet
+} from 'react-native';
+import {
+    CheckBox,
+    Input,
+    ButtonGroup,
+    ListItem,
+    Button
+} from 'react-native-elements';
+import MenuButtonWS from '../Components/MenuButtonWS';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ViewCategoryWS2 from '../Components/ViewCategoryWS2';
+import { CatItem } from '../Components/CategoryItems';
+
+export default function menuWS({navigation}) {
+    const [restaurantlocationcode, setRestaurantlocationcode] = useState('')
+    const [menu, setMenu] = useState([]);
+    const [category, setCategory] = useState([]);
+    const [selected, setSelected] = useState(0);
+
+    function viewMenu() {
+        fetch('URL', {
+            method: 'POST',
+            body: JSON.stringify({ restaurantlocationcode: restaurantlocationcode}),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(response=> setMenu(response));
+        console.log(menu);
+        alert(menu);
+
+    }
+    
+    function viewCategory({item}) {
+        fetch('URL', {
+            method: 'POST',
+            body: JSON.stringify({
+                category: item,
+                restaurantlocationcode: restaurantlocationcode,
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(response => {
+            setCategory(response);
+            console.log(response);
+            alert(response);
+        });
+        navigation.navigate('ViewCategoryWS2', {category});
+        
+    }
+
+    function showMenu() {
+        console.log(menu);
+        alert(menu);
+    }
+    
+    //This function is to show if category value is set after an item is selected.
+    function showCat() {
+        console.log(category);
+        alert(category);
+    }
+
+    
+    const buttons = ['Menu']
+
+    return (
+        <CatItem>
+        <View style={styles.container}>
+            <Input
+                style={styles.Input} 
+                placeholder='Restaurant Location Code'
+                leftIcon={
+                    <Icon
+                    name='location-arrow' 
+                    size={24}
+                    color='black'
+                    />
+                }
+                onChangeText={setRestaurantlocationcode}
+                value={restaurantlocationcode}
+                underlineColorAndroid='transparent'
+            />
+
+            <ButtonGroup
+                onPress={viewMenu}
+                selectedIndex={selected}
+                selectedButtonStyle={{backgroundColor: 'blue'}}
+                buttons={buttons}
+                containerStyle={styles.buttonGroup} 
+            />
+
+            <Button 
+                title='Next'
+                type='solid'
+                onPress={showCat}
+                containerStyle={styles.button}
+            />
+
+
+            <FlatList 
+                data={menu}
+                extraData={category}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({item, index}) => (
+                    <ListItem
+                    titleStyle={{ color: 'black', fontWeight: 'bold'}}
+                    title={item}
+                    onPress={() => viewCategory({item})}
+                    bottomDivider
+                    chevron
+                    />
+                )}
+            />
+        
+            <ViewCategoryWS2 />
+        </View>
+        </CatItem>
+    )
+}
