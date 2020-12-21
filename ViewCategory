@@ -1,0 +1,65 @@
+import React, { useState, useReducer, useEffect } from 'react';
+import {
+    View,
+    Text, 
+    FlatList,
+    StyleSheet,
+} from 'react-native';
+import {
+    CheckBox,
+    ButtonGroup,
+    Button,
+} from 'react-native-elements';
+
+import Ionicons from  'react-native-vector-icons/Ionicons';
+import UsersBill2 from '../Components/UsersBill2';
+import { useItem }  from '../Components/CategoryItems';
+
+
+function ViewCategoryWS2({navigation}) {
+    const category = useItem()
+    const [eats, setEats] = useState([]);
+    const [selected, toggleSelected] = useState(false); 
+    
+    function free() {
+        console.log(category);
+        alert(category);
+    }
+
+    return (
+        <View style={styles.container}>
+            <Text>{category}</Text>
+            
+            <Button 
+                title='Next'
+                type='solid'
+                onPress={free}
+                containerStyle={styles.button}
+            />
+
+            <FlatList
+                data={JSON.stringify(category)}
+                extraData={eats}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <CheckBox 
+                        center 
+                        titleProps={{ color: 'black', fontWeight: 'bold'}}
+                        title={item}
+                        iconRight
+                        checked={selected}
+                        onPress={() => toggleSelected(!selected)}
+                        size={30}
+                        containerStyle={styles.checkBox} 
+                    />  
+                    
+                )}
+            />
+            
+            <UsersBill2 /> 
+        </View>
+       
+    )
+    
+
+}
